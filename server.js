@@ -1,22 +1,18 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 
-app.use(bodyParser.json());
+const targetUrl = 'http://localhost:5173'; // Replace with your VR streaming server URL
 
-const proxyOptions = {
-  target: 'https://proxy-server-iz3a.onrender.com',
+const proxyMiddleware = createProxyMiddleware({
+  target: targetUrl,
   changeOrigin: true,
-  pathRewrite: {
-    '^/vr-streaming': '/vr-streaming',
-  },
-};
+});
 
-app.use('/vr-streaming', createProxyMiddleware(proxyOptions));
+app.use('/vr-streaming', proxyMiddleware);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Proxy server is running on port ${PORT}`);
 });
