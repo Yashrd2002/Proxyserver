@@ -1,24 +1,28 @@
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
-
+const bodyParser = require('body-parser');
 const app = express();
 
-app.get('/', (req, res) => {
-  const targetUrl = req.query.targetUrl;
-  if (!targetUrl) {
+app.use(bodyParser.json());
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Origin, Authorization');
+  next();
+});
+app.post('/', (req, res) => {
+  const {url} = req.body;
+  if (!url) {
     return res.status(400).send('Target URL is missing.');
   }
 
   const apiProxy = createProxyMiddleware({
-    target: targetUrl,
+    target: url,
     changeOrigin: true,
   });
 
-  // Use the proxy middleware for all paths
-  app.use('/', apiProxy);
-
-  // Respond with the target URL
-  res.send(`Proxying requests to: ${targetUrl}`);
+  // Use the proxy middleware for the '/api' path
+  app.use(apiProxy)
 });
 
 const PORT = process.env.PORT || 5000;
