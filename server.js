@@ -7,7 +7,7 @@ const app = express();
 app.use(bodyParser.json());
 
 const proxyOptions = {
-  target: 'http://proxy-server-iz3a.onrender.com',
+  target: 'https://proxy-server-iz3a.onrender.com',
   changeOrigin: true,
   pathRewrite: {
     '^/vr-streaming': '/vr-streaming',
