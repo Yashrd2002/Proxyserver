@@ -3,7 +3,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 
-const targetUrl = 'http://localhost:5173/'; // Replace with your VR streaming server URL
+const targetUrl = 'http://localhost:5173'; // Replace with your VR streaming server URL
 
 const proxyMiddleware = createProxyMiddleware({
   target: targetUrl,
