@@ -1,27 +1,18 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const app = express();
-const cors = require('cors'); 
 const { createProxyMiddleware } = require('http-proxy-middleware');
-app.use(bodyParser.json());
-app.use(cors()); 
 
-app.post('/api/setTargetUrl', (req, res) => {
-  const { url } = req.body;
-  console.log('Received targetUrl:', url);
+const app = express();
 
-  const proxyMiddleware = createProxyMiddleware({
-    target: url,
-    changeOrigin: true,
-    ws: true,
-  });
+const targetUrl = 'http://192.168.1.2:3442'; // Replace with your VR streaming server URL
 
-  app.use('/', proxyMiddleware);
-
-  res.json({ message: 'Received targetUrl successfully!' });
+const proxyMiddleware = createProxyMiddleware({
+  target: targetUrl,
+  changeOrigin: true,
 });
 
-const PORT = 5000;
+app.use('/vr-streaming', proxyMiddleware);
+
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Proxy server is running on port ${PORT}`);
 });
